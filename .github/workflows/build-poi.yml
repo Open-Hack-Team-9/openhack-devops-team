@@ -2,13 +2,13 @@ name: Build POI API
 
 on:
   push:
-#    paths:
-#      - 'apis/poi'
-    branches: [ poi-branch ]
+    paths:
+      - 'apis/poi/**'
+    branches: [ master ]
   pull_request:
-#    paths:
-#      - 'apis/poi'
-    branches: [ poi-branch ]
+    paths:
+      - 'apis/poi/**'
+    branches: [ master ]
     
 jobs:
   build:
