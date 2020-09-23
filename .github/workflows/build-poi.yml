@@ -46,6 +46,8 @@ jobs:
         # assignees: # optional
   package:
     needs: build
+    if: github.event_name == 'push'
+        
     defaults:
       run:
         working-directory: ./apis/poi/web
