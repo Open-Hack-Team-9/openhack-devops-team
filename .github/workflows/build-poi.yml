@@ -67,4 +67,11 @@ jobs:
           BASEIMAGETAG: ${{ github.run_number }}
           ACRNAME: openhacku454g2u9acr.azurecr.io
         run: az acr build --image "devopsoh/api-poi:${BASEIMAGETAG}" --registry $ACRNAME --file Dockerfile .
-      
+            
+      - uses: azure/webapps-container-deploy@v1
+        with:
+          app-name: 'node-rncopenhacku454g2u9poi'
+          images: 'openhacku454g2u9acr.azurecr.io/devopsoh/api-poi:${BASEIMAGETAG}'
+      - name: Azure logout
+        run: |
+          az logout
