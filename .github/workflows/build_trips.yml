@@ -20,7 +20,7 @@ jobs:
       - name: Setup Go environment      
         uses: actions/setup-go@v2.1.2    
       - name: Compile Go
-        run: go build main.go
+        run: go build .
       - name: Test Go
         run: go test
   package:    
