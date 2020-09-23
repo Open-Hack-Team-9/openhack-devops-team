@@ -17,8 +17,9 @@ jobs:
         working-directory: ./apis/trips
     runs-on: ubuntu-latest
     steps: 
-      - name: Setup Go environment
+      - name: Setup Go environment      
         uses: actions/setup-go@v2.1.2    
+      - name: Compile Go
         run: go compile main.go
   package:    
     needs: build
