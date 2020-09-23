@@ -1,0 +1,21 @@
+name: Build All Other
+
+on:
+  push:
+    paths-ignore:
+      - 'apis/poi/**'
+    branches: [ master ]
+  pull_request:
+    paths-ignore:
+      - 'apis/poi/**'
+    branches: [ master ]
+    
+jobs:
+  build:
+    
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: nothing_to_do
+        run: echo 'done nothing'
+
