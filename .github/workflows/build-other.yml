@@ -3,11 +3,11 @@ name: Build All Other
 on:
   push:
     paths-ignore:
-      - 'apis/poi/**'
+      - 'apis/**'      
     branches: [ master ]
   pull_request:
     paths-ignore:
-      - 'apis/poi/**'
+      - 'apis/**'     
     branches: [ master ]
     
 jobs:
