@@ -44,4 +44,25 @@ jobs:
         body: 'The body'
         # Issue Assignee
         # assignees: # optional
+  package:
+    needs: build
+    defaults:
+      run:
+        working-directory: ./apis/poi/web
+        
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+          creds: ${{secrets.SECRETTEAM9}}
+          # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
+          # enable-AzPSSession: # optional  
+      - name: Building Docker image
+        env: 
+          BASEIMAGETAG: team9
+          ACRNAME: openhacku454g2u9acr.azurecr.io
+        run: az acr build --image "devopsoh/api-poi:${BASEIMAGETAG}" --registry $ACRNAME --file Dockerfile .
       
