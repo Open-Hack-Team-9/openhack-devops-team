@@ -20,7 +20,9 @@ jobs:
       - name: Setup Go environment      
         uses: actions/setup-go@v2.1.2    
       - name: Compile Go
-        run: go compile main.go
+        run: go build main.go
+      - name: Test Go
+        run: go test
   package:    
     needs: build
     if: github.event_name == 'push'
