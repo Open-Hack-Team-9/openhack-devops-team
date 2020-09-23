@@ -1,0 +1,63 @@
+name: Build User Profile API
+
+on:
+  push:
+    paths:
+      - 'apis/userprofile/**'
+    branches: [ master ]
+  pull_request:
+    paths:
+      - 'apis/userprofile/**'
+    branches: [ master ]
+    
+jobs:
+  build:
+    defaults:
+      run:
+        working-directory: ./apis/userprofile
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v2
+      - name: Use Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+         node-version: '10.x'
+      - name: npm install, build, and test
+        run: |
+          # Build and test the project, then
+          # deploy to Azure Web App.
+          npm install
+          npm run build --if-present
+          npm run test --if-present
+
+  package:    
+    needs: build
+    if: github.event_name == 'push'
+        
+    defaults:
+      run:
+        working-directory: ./apis/userprofile
+        
+    runs-on: ubuntu-latest
+    steps:      
+      - uses: actions/checkout@v2
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+          creds: ${{ secrets.SECRETTEAM9 }}
+          # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
+          # enable-AzPSSession: # optional  
+      - name: Building Docker image
+        env: 
+          BASEIMAGETAG: ${{ github.run_number }}
+          ACRNAME: openhacku454g2u9acr.azurecr.io
+        run: az acr build --image "devopsoh/api-userprofile:${BASEIMAGETAG}" --registry $ACRNAME --file Dockerfile .
+            
+      - uses: azure/webapps-deploy@v2      
+        with:
+          app-name: 'openhacku454g2u9userprofile'
+          images: 'openhacku454g2u9acr.azurecr.io/devopsoh/api-userpofile:${{ github.run_number }}'
+      - name: Azure logout
+        run: |
+          az logout
