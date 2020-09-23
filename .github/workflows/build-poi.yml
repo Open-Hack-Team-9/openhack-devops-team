@@ -70,7 +70,7 @@ jobs:
             
       - uses: azure/webapps-deploy@v2      
         with:
-          app-name: 'node-rncopenhacku454g2u9poi'
+          app-name: 'openhacku454g2u9poi'
           images: 'openhacku454g2u9acr.azurecr.io/devopsoh/api-poi:${BASEIMAGETAG}'
       - name: Azure logout
         run: |
