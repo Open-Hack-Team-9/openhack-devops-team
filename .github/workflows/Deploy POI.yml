@@ -1,21 +1,19 @@
 name: Deploy POI API
 
-on:
-  push:
-    paths:
-      - 'apis/poi/**'
-    branches: [ master ]
-  pull_request:
-    paths:
-      - 'apis/poi/**'
-    branches: [ master ]
+on: 
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Test scenario tags'  
     
 jobs:
   
-  package:
-    
-    if: github.event_name == 'push'
-        
+  package:   
+            
     defaults:
       run:
         working-directory: ./apis/poi/web
