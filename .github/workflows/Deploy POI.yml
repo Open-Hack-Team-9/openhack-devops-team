@@ -34,7 +34,9 @@ jobs:
           ACRNAME: openhacku454g2u9acr.azurecr.io
         run: az acr build --image "devopsoh/api-poi:${BASEIMAGETAG}" --registry $ACRNAME --file Dockerfile .
             
-      - uses: azure/webapps-deploy@v2      
+      - uses: azure/webapps-deploy@v2     
+        env: 
+          BASEIMAGETAG: ${{ github.run_number }} 
         with:
           app-name: 'openhacku454g2u9poi'
           images: 'openhacku454g2u9acr.azurecr.io/devopsoh/api-poi:${BASEIMAGETAG}'
