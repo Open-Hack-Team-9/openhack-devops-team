@@ -62,7 +62,7 @@ jobs:
           # enable-AzPSSession: # optional  
       - name: Building Docker image
         env: 
-          BASEIMAGETAG: team9
+          BASEIMAGETAG: ${{ github.run_number }}
           ACRNAME: openhacku454g2u9acr.azurecr.io
         run: az acr build --image "devopsoh/api-poi:${BASEIMAGETAG}" --registry $ACRNAME --file Dockerfile .
       
