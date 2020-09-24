@@ -11,19 +11,17 @@ on:
         description: 'Test scenario tags'  
     
 jobs:
-  
-  package:   
-            
+  deploytoappservice:   
+    timeout-minutes: 5  
+          
     defaults:
       run:
         working-directory: ./apis/poi/web
-        
+      
     runs-on: ubuntu-latest
     steps:
       - name: Wait on Staging Slot being Healthy (200)
         uses: iFaxity/wait-on-action@v1
         with: 
           resource: https-get://openhacku454g2u9poi-staging.azurewebsites.net/api/healthcheck/poi
-          timeout: 300000 #wait 5 minutes
-          
-      
+        
