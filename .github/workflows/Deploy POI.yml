@@ -24,5 +24,6 @@ jobs:
         uses: iFaxity/wait-on-action@v1
         with: 
           resource: https-get://openhacku454g2u9poi-staging.azurewebsites.net/api/healthcheck/poi
+          timeout: 300000 #wait 5 minutes
           
       
