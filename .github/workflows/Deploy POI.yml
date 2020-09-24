@@ -1,4 +1,4 @@
-name: Deploy POI API
+name: Deploy POI API (TEST ONLY)
 
 on: 
   workflow_dispatch:
@@ -11,16 +11,18 @@ on:
         description: 'Test scenario tags'  
     
 jobs:
-  
-  package:   
-            
+  deploytoappservice:   
+    timeout-minutes: 5  
+          
     defaults:
       run:
         working-directory: ./apis/poi/web
-        
+      
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out code
+        uses: actions/checkout@v2
+        
       - name: Azure Login
         uses: Azure/login@v1
         with:
@@ -28,16 +30,11 @@ jobs:
           creds: ${{ secrets.SECRETTEAM9 }}
           # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
           # enable-AzPSSession: # optional  
-      - name: Building Docker image
-        env: 
-          BASEIMAGETAG: ${{ github.run_number }}
-          ACRNAME: openhacku454g2u9acr.azurecr.io
-        run: az acr build --image "devopsoh/api-poi:${BASEIMAGETAG}" --registry $ACRNAME --file Dockerfile .
-            
-      - uses: azure/webapps-deploy@v2     
-        with:
-          app-name: 'openhacku454g2u9poi'
-          images: 'openhacku454g2u9acr.azurecr.io/devopsoh/api-poi:${{ github.run_number }}'
-      - name: Azure logout
-        run: |
-          az logout
+
+      - name: Wait on Staging Slot being Healthy (200)
+        uses: iFaxity/wait-on-action@v1
+        with: 
+          resource: https-get://openhacku454g2u9poi-staging.azurewebsites.net/api/healthcheck/poi
+
+      - name: Swap the Staging Slot with the Production Slot
+        run: az webapp deployment slot swap -n openhacku454g2u9poi -g openhacku454g2u9rg -s staging
