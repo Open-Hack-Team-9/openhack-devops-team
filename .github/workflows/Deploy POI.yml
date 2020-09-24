@@ -49,7 +49,7 @@ jobs:
       - name: Wait on Prod Slot being Healthy (200)
         uses: iFaxity/wait-on-action@v1
         with: 
-          resource: https-get://openhacku454g2u9poi.azurewebsites.net/api/healthcheck/poi
+          resource: https-get://openhacku454g2u9poi.azurewebsites.net/api/healthcheck/pois
           timeout: 100000
         
   rollback:
@@ -79,7 +79,7 @@ jobs:
           creds: ${{ secrets.SECRETTEAM9 }}
           # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
           # enable-AzPSSession: # optional  
-      - name: Rolling Back
+      - name: Stopping Back
         run: az webapp stop -s staging -n openhacku454g2u9poi -g openhacku454g2u9rg
   
   
