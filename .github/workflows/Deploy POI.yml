@@ -1,4 +1,4 @@
-name: Deploy POI API
+name: Deploy POI API (TEST ONLY)
 
 on: 
   workflow_dispatch:
@@ -20,25 +20,9 @@ jobs:
         
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Azure Login
-        uses: Azure/login@v1
-        with:
-          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
-          creds: ${{ secrets.SECRETTEAM9 }}
-          # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
-          # enable-AzPSSession: # optional  
-      - name: Building Docker image
-        env: 
-          BASEIMAGETAG: ${{ github.run_number }}
-          ACRNAME: openhacku454g2u9acr.azurecr.io
-        run: az acr build --image "devopsoh/api-poi:${BASEIMAGETAG}" --registry $ACRNAME --file Dockerfile .
-            
-      - uses: azure/webapps-deploy@v2     
-        with:
-          app-name: 'openhacku454g2u9poi'
-          slot-name: 'staging'
-          images: 'openhacku454g2u9acr.azurecr.io/devopsoh/api-poi:${{ github.run_number }}'
-      - name: Azure logout
-        run: |
-          az logout
+      - name: Wait on Staging Slot being Healthy (200)
+        uses: iFaxity/wait-on-action@v1
+        with: 
+          resource: https-get://openhacku454g2u9poi-staging.azurewebsites.net/api/healthcheck/poi
+          
+      
