@@ -20,8 +20,21 @@ jobs:
       
     runs-on: ubuntu-latest
     steps:
+      #- name: Check out code
+      #  uses: actions/checkout@v2
+        
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+          creds: ${{ secrets.SECRETTEAM9 }}
+          # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
+          # enable-AzPSSession: # optional  
+
       - name: Wait on Staging Slot being Healthy (200)
         uses: iFaxity/wait-on-action@v1
         with: 
           resource: https-get://openhacku454g2u9poi-staging.azurewebsites.net/api/healthcheck/poi
-        
+
+      - name: Swap the Staging Slot with the Production Slot
+        run: az webapp deployment slot swap -n "openhacku454g2u9poi" -g "openhacku454g2u9rg" -s "staging"
