@@ -44,7 +44,7 @@ jobs:
         body: 'The body'
         # Issue Assignee
         # assignees: # optional
-  package:
+  deploytoappservice:
     needs: build
     if: github.event_name == 'push'
         
@@ -71,7 +71,58 @@ jobs:
       - uses: azure/webapps-deploy@v2      
         with:
           app-name: 'openhacku454g2u9poi'
+          slot-name: 'staging'
           images: 'openhacku454g2u9acr.azurecr.io/devopsoh/api-poi:${{ github.run_number }}'
-      - name: Azure logout
-        run: |
-          az logout
+
+      - name: startstaging
+        run: az webapp start -s staging -n openhacku454g2u9poi -g openhacku454g2u9rg
+
+      - name: Wait on Staging Slot being Healthy (200)
+        uses: iFaxity/wait-on-action@v1
+        with: 
+          resource: https-get://openhacku454g2u9poi-staging.azurewebsites.net/api/healthcheck/poi
+
+      - name: Swap the Staging Slot with the Production Slot
+        run: az webapp deployment slot swap -n openhacku454g2u9poi -g openhacku454g2u9rg -s staging
+
+  check:
+    needs: deploytoappservice 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait on Prod Slot being Healthy (200)
+        uses: iFaxity/wait-on-action@v1
+        with: 
+          resource: https-get://openhacku454g2u9poi.azurewebsites.net/api/healthcheck/poi
+          timeout: 100000
+
+  rollback:
+    needs: check
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+          creds: ${{ secrets.SECRETTEAM9 }}
+          # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
+          # enable-AzPSSession: # optional  
+      - name: Rolling Back
+        run: az webapp deployment slot swap -n openhacku454g2u9poi -g openhacku454g2u9rg -s staging
+
+  shutdownstaging:
+    needs: check
+    #if: ${{ succes()}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+          creds: ${{ secrets.SECRETTEAM9 }}
+          # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
+          # enable-AzPSSession: # optional  
+      - name: Stopping Back
+        run: az webapp stop -s staging -n openhacku454g2u9poi -g openhacku454g2u9rg
+
+
