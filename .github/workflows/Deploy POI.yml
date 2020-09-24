@@ -37,4 +37,4 @@ jobs:
           resource: https-get://openhacku454g2u9poi-staging.azurewebsites.net/api/healthcheck/poi
 
       - name: Swap the Staging Slot with the Production Slot
-        run: az webapp deployment slot swap -n "openhacku454g2u9poi" -g "openhacku454g2u9rg" -s "staging"
+        run: az webapp deployment slot swap -n openhacku454g2u9poi -g openhacku454g2u9rg -s staging
